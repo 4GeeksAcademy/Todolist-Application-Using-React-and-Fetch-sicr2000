@@ -6,6 +6,7 @@ const Home = () => {
   const user = "sebas";
   const [inputValue, setInputValue] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [isInitialized, setInitialized] = useState(false);
 
   async function fetchData(event) {
     if (event.key === "Enter" && inputValue) {
@@ -25,13 +26,46 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetch(`https://playground.4geeks.com/apis/fake/todos/user/${user}`, {
-      method: "PUT",
-      body: JSON.stringify(tasks),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    let updateWithServer = isInitialized;
+    if (!isInitialized && tasks.length != 0) {
+      setInitialized(true);
+      updateWithServer = true;
+    }
+    if (updateWithServer) {
+      const updateWithServerFn = async () => {
+        if (tasks.length != 0) {
+          fetch(`https://playground.4geeks.com/apis/fake/todos/user/${user}`, {
+            method: "PUT",
+            body: JSON.stringify(tasks),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        } else {
+          await fetch(
+            `https://playground.4geeks.com/apis/fake/todos/user/${user}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          await fetch(
+            `https://playground.4geeks.com/apis/fake/todos/user/${user}`,
+            {
+              method: "POST",
+              body: JSON.stringify([]),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+      };
+
+      updateWithServerFn();
+    }
   }, [tasks]);
 
   useEffect(() => {
@@ -51,7 +85,7 @@ const Home = () => {
           );
         } else {
           const responseJson = await response.json();
-          setTasks(responseJson);
+          setTasks(responseJson.filter((item) => item.id != 1));
         }
       } catch (error) {
         console.error(error);
