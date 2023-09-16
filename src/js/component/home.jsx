@@ -34,13 +34,16 @@ const Home = () => {
     if (updateWithServer) {
       const updateWithServerFn = async () => {
         if (tasks.length != 0) {
-          fetch(`https://playground.4geeks.com/apis/fake/todos/user/${user}`, {
-            method: "PUT",
-            body: JSON.stringify(tasks),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          await fetch(
+            `https://playground.4geeks.com/apis/fake/todos/user/${user}`,
+            {
+              method: "PUT",
+              body: JSON.stringify(tasks),
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
         } else {
           await fetch(
             `https://playground.4geeks.com/apis/fake/todos/user/${user}`,
