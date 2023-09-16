@@ -21,7 +21,7 @@ const Home = () => {
   };
 
   const deleteAllTasks = () => {
-    setTasks([]); // Vacía el arreglo de tareas
+    setTasks([]);
   };
 
   useEffect(() => {
